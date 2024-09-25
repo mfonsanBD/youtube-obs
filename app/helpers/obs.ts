@@ -8,8 +8,6 @@ export async function connectOBS() {
   try {
     // Conecte-se ao OBS WebSocket
     await obs.connect(env.OBS_LOCAL_URL, env.OBS_PASSWORD);
-
-    console.log('Conectado ao OBS via WebSocket!');
   } catch (error) {
     throw new Error('Erro ao conectar ao OBS:' + error);
   }
@@ -26,8 +24,6 @@ export async function setStreamKey(streamKey: string) {
         key: streamKey, // Chave da transmissão obtida da API do YouTube
       },
     });
-
-    console.log('Stream Key configurada no OBS!');
   } catch (error) {
     console.error('Erro ao configurar Stream Key:', error);
   }
@@ -38,7 +34,6 @@ export async function startStream() {
   try {
     // Inicie a transmissão no OBS
     await obs.call('StartStream');
-    console.log('Stream iniciada no OBS!');
   } catch (error) {
     console.error('Erro ao iniciar a transmissão:', error);
   }

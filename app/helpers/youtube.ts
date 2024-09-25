@@ -1,9 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { google } from 'googleapis';
 import { env } from '../types/env';
 import { connectOBS, setStreamKey, startStream } from './obs';
 const youtube = google.youtube('v3');
-
-let streamStatusData: string = 'noData'
 
 export async function createBroadcast(accessToken: string, title: string, description: string) {
   const auth = new google.auth.OAuth2({
@@ -31,8 +30,6 @@ export async function createBroadcast(accessToken: string, title: string, descri
       },
     },
   });
-
-  console.log('broadcast status: ', broadcast.data.status);
   
   // Cria o stream
   const stream = await youtube.liveStreams.insert({
@@ -50,8 +47,6 @@ export async function createBroadcast(accessToken: string, title: string, descri
       },
     },
   });
-
-  console.log('stream status: ', stream.data.status);
   
   // Vincular transmissão e stream
   await youtube.liveBroadcasts.bind({
@@ -65,26 +60,13 @@ export async function createBroadcast(accessToken: string, title: string, descri
   await setStreamKey(stream.data.cdn?.ingestionInfo?.streamName as string); // Configurar a Stream Key do YouTube
   await startStream(); // Iniciar a transmissão no OBS
 
-  while (streamStatusData !== 'good') {
-    const status = await youtube.liveStreams.list({
-      auth,
-      id: [stream.data.id] as string[],
-      part: ['status']
-    });
-
-    console.log('status:', status!.data!.items![0].status?.healthStatus?.status);
-    
-    streamStatusData = status!.data!.items![0].status?.healthStatus?.status as string
-  }
-
-
-  if (streamStatusData === 'good') {
-    await youtube.liveBroadcasts.transition({
+  await new Promise(() => setTimeout(() => {
+    youtube.liveBroadcasts.transition({
       auth,
       broadcastStatus: 'live',
       id: broadcast.data.id as string,
       part: ['id', 'snippet', 'status'],
-    });
-  }
+    })
+  }, 5 * 60 * 1000))
 }
 
