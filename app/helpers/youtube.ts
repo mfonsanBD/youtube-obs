@@ -130,3 +130,23 @@ export async function endBroadcast(accessToken: string, broadcastId: string) {
   }
 }
 
+export async function getChannelData(accessToken: string) {
+  try {
+    const auth = await createGoogleAuth()
+    auth.setCredentials({ access_token: accessToken, scope: 'https://www.googleapis.com/auth/youtube.force-ssl' })
+
+    // Fazer a requisição para obter os dados do canal do usuário autenticado
+    const response = await youtube.channels.list({
+      auth,
+      part: ['snippet','contentDetails','statistics'],
+      mine: true,  // Pega o canal do usuário autenticado
+    })
+    
+    // Retornar os dados do canal
+    return response.data.items![0]
+  } catch (error) {
+    console.error('Error fetching YouTube channel data:', error)
+    throw new Error('Failed to fetch YouTube channel data')
+  }
+}
+

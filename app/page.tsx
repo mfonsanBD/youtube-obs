@@ -6,6 +6,8 @@ import { signIn, signOut, useSession } from "next-auth/react";
 export default function Home() {
   const { data: session } = useSession();
 
+  console.log(session);
+
   const handleCreateTransmission = async () => {
     const data = {
       title: 'Teste', 
@@ -27,7 +29,10 @@ export default function Home() {
           <button onClick={handleCreateTransmission}>Criar Transmissão</button>
         </div>
       ) : (
-        <button onClick={() => signIn('google')}>Login com Google</button>
+        <div className="flex gap-4">
+          <button onClick={() => signIn('google')}>Login com Google</button>
+          <button onClick={() => signOut()}>Deslogar</button>
+        </div>
       )}
     </div>
   );
