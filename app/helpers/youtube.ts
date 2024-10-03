@@ -138,12 +138,20 @@ export async function getChannelData(accessToken: string) {
     // Fazer a requisição para obter os dados do canal do usuário autenticado
     const response = await youtube.channels.list({
       auth,
-      part: ['snippet','contentDetails','statistics'],
+      part: ['snippet', 'statistics'],
       mine: true,  // Pega o canal do usuário autenticado
     })
     
     // Retornar os dados do canal
-    return response.data.items![0]
+    return {
+      name: response.data.items![0].snippet?.title,
+      username: response.data.items![0].snippet?.customUrl,
+      description: response.data.items![0].snippet?.description,
+      image: response.data.items![0].snippet?.thumbnails?.medium?.url,
+      subscribers: response.data.items![0].statistics?.subscriberCount,
+      videos: response.data.items![0].statistics?.videoCount,
+      views: response.data.items![0].statistics?.viewCount,
+    }
   } catch (error) {
     console.error('Error fetching YouTube channel data:', error)
     throw new Error('Failed to fetch YouTube channel data')

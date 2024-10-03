@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import NextAuth from 'next-auth';
+import { ChannelData } from './channelData';
 
 declare module "next-auth" {
     interface Profile {
@@ -10,7 +11,7 @@ declare module "next-auth" {
     interface Session {
       accessToken?: string;
       idToken?: string;
-      channelData?: any;
+      channelData: ChannelData;
       user: {
         name?: string;
         email?: string;
